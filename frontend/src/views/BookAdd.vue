@@ -31,22 +31,7 @@ export default {
     methods: {
         async addBook(data) {
             try {
-                const formData = new FormData();
-                // Kiểm tra dữ liệu trước khi gửi đi
-                Object.keys(data).forEach((key) => {
-                    if (key === "image" && data[key] instanceof File) {
-                        formData.append("image", data[key]);
-                    } else if (data[key] !== undefined && data[key] !== null && data[key] !== "") {
-                        formData.append(key, data[key]);
-                    }
-                });
-
-                console.log("Dữ liệu FormData gửi đến API:");
-                for (const pair of formData.entries()) {
-                    console.log(pair[0], ":", pair[1]);
-                }
-
-                await BookService.create(formData);
+                await BookService.create(data);
                 alert("Sách đã được thêm thành công.");
                 this.$router.push({ name: "books" });
             } catch (error) {

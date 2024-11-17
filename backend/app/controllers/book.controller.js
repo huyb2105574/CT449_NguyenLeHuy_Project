@@ -55,23 +55,33 @@ exports.findOne = async (req, res, next) => {
 };
 
 exports.update = async (req, res, next) => {
-    if (Object.keys(req.body).length === 0) {
+    console.log('req.body:', req.body);
+    console.log('req.file:', req.file); 
+
+    if (Object.keys(req.body).length === 0 && !req.file) {
         return next(new ApiError(400, "Data to update cannot be empty"));
     }
 
     try {
         const bookService = new BookService(MongoDB.client);
-        const document = await bookService.update(req.params.id, req.body);
+        const image_url = req.file
+            ? `/uploads/books/${req.file.filename}`
+            : req.body.image || null;
+        delete req.body.image;
+        const document = await bookService.update(req.params.id, req.body, image_url);
+
         if (!document) {
             return next(new ApiError(404, "Book not found"));
         }
-        return res.send({ message: "Book updated successfully" });
+
+        return res.send({ message: "Book updated successfully", document });
     } catch (error) {
         return next(
             new ApiError(500, `Error updating book with id=${req.params.id}`)
         );
     }
 };
+
 
 exports.delete = async (req, res, next) => {
     try {

@@ -12,7 +12,7 @@ export default {
     <table class="table table-hover">
         <thead class="thead-light">
             <tr>
-                <th>#</th>
+                <th>STT</th>
                 <th>Tiêu đề</th>
                 <th>Tác giả</th>
                 <th>Số lượng</th>

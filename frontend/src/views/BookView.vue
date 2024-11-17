@@ -3,7 +3,7 @@
         <div class="col-md-10">
             <InputSearch v-model="searchText" />
         </div>
-        <div class="mt-3 col-md-6">
+        <div class="mt-3 col-md-7">
             <h4>
                 Danh sách Sách
             </h4>
@@ -25,7 +25,7 @@
                 </button>
             </div>
         </div>
-        <div class="mt-3 col-md-6">
+        <div class="mt-3 col-md-5">
             <div v-if="activeBook">
                 <h4>
                     Chi tiết sách

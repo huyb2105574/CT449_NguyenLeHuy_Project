@@ -57,18 +57,20 @@ class BookService {
         });
     }
 
-    async update(id, payload) {
+    async update(id, payload, image_url) {
         const filter = {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
         };
-        const update = this.extractBookData(payload);
+
+        const update = this.extractBookData(payload, image_url); 
         const result = await this.Book.findOneAndUpdate(
             filter,
             { $set: update },
             { returnDocument: "after" }
         );
-        return result;
+        return result; 
     }
+
 
     async delete(id) {
         const result = await this.Book.findOneAndDelete({

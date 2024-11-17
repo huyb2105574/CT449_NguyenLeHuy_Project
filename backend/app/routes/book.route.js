@@ -13,7 +13,8 @@ router.route("/")
 
 router.route("/:id")
     .get(bookController.findOne)
-    .put(bookController.update)
+    .put(BookService.uploadImage.single('image'), bookController.update) 
     .delete(bookController.delete);
+
 
 module.exports = router;

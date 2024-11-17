@@ -45,7 +45,6 @@
                     {{ publisher.name }}
                 </option>
             </select>
-            <ErrorMessage name="publisher_id" class="error-feedback" />
         </div>
         <div class="form-group">
             <label for="image">Hình ảnh minh họa</label>
@@ -55,11 +54,26 @@
                 class="form-control-file" 
                 @change="onImageSelected" 
             />
-            <ErrorMessage name="image" class="error-feedback" />
+            <div v-if="previewImage" class="mt-2">
+                <p><strong>Hình ảnh xem trước:</strong></p>
+                <img 
+                    :src="previewImage" 
+                    alt="Hình ảnh minh họa" 
+                    style="max-width: 100%; max-height: 200px; object-fit: contain;" 
+                />
+            </div>
         </div>
+
+
         <div class="form-group">
             <button class="btn btn-primary">
                 <i class="fas fa-save"></i> Lưu
+            </button>
+            <button v-if="bookLocal._id" type="button" class="mr-2 btn btn-danger" @click="deleteBook">
+                <i class="fas fa-trash-alt"></i> Xóa
+            </button>
+            <button type="button" class="mr-2 btn btn-danger" @click="Cancel">
+                <i class="fas fa-times"></i> Thoát
             </button>
         </div>
     </Form>
@@ -104,6 +118,9 @@ export default {
             publishers: [],
             selectedImage: null,
             bookFormSchema,
+            previewImage: this.book.image 
+                ? `http://localhost:3000${this.book.image}` //
+                : null,
         };
     },
     async created() {
@@ -125,33 +142,29 @@ export default {
             const file = event.target.files[0];
             if (file) {
                 this.selectedImage = file;
-                this.bookLocal.image = file;  
+                this.bookLocal.image = file;
+                this.previewImage = URL.createObjectURL(file);  
             }
         },
         async submitBook() {
-            const isValid = await this.$refs.form.validate();
-            if (!isValid) {
-                console.log("Dữ liệu không hợp lệ.");
-                return;
-            }
-
-            const formData = new FormData();
-
-            // Kiểm tra và thêm các trường vào FormData
-            Object.keys(this.bookLocal).forEach((key) => {
-                const value = this.bookLocal[key];
-                if (key === "image" && this.selectedImage) {
-                    formData.append("image", this.selectedImage);
-                    console.log(`Thêm ${key}:`, this.selectedImage);
-                } else if (value !== undefined && value !== null && value !== "") {
-                    formData.append(key, value);
-                    console.log(`Thêm ${key}:`, value);
+            const bookData = { ...this.bookLocal };
+                if (!this.selectedImage) {
+                    bookData.image = this.book.image;
+                } else {
+                    bookData.image = this.selectedImage;
                 }
-            });
+            this.$emit("submit:book", bookData);
+        },
+        deleteBook() {
+            this.$emit("delete:book", this.bookLocal.id);
+        },
+        Cancel(){
+            const reply = window.confirm('Bạn chưa lưu thay đổi! Bạn muốn thoát?')
 
-            console.log("Dữ liệu FormData gửi đi:", formData);
-            // Gửi dữ liệu lên cha (hoặc API)
-            this.$emit("submit:book", formData);
+            if (!reply) {
+                return false
+            }
+            else this.$router.push({ name: "books" });
         }
     },
 };
