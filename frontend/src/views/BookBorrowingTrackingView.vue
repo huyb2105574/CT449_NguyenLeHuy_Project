@@ -1,10 +1,7 @@
 <template>
     <div class="page row">
-        <div class="col-md-10">
-            <InputSearch v-model="searchText" />
-        </div>
-        <div class="mt-3 col-md-6">
-            <h4>Quản lý Mượn Sách</h4>
+        <div class="mt-3 col-md-10">
+            <h4>Lịch sữ Mượn Sách</h4>
             <BookBorrowingTrackingList
                 v-if="filteredTrackingsCount > 0"
                 :trackings="filteredTrackings"
@@ -12,32 +9,39 @@
             />
             <p v-else>Không có thông tin mượn sách.</p>
             <div class="mt-3 row justify-content-around align-items-center">
-                <button class="btn btn-sm btn-primary" @click="refreshList()">
+                <button class="btn btn-sm btn-primary w-auto" @click="refreshList()">
                     <i class="fas fa-redo"></i> Làm mới
                 </button>
-                <button class="btn btn-sm btn-danger" @click="removeAllTrackings">
+                <button class="btn btn-sm btn-success w-auto" @click="goToAddBookBorrowingTracking">
+                    <i class="fas fa-plus"></i> Thêm mới
+                </button>
+                <button class="btn btn-sm btn-danger w-auto" @click="removeAllTrackings">
                     <i class="fas fa-trash"></i> Xóa tất cả
                 </button>
             </div>
         </div>
-        <div class="mt-3 col-md-6" v-if="activeTracking">
-            <h4>Chi tiết Mượn Sách</h4>
-            <BookBorrowingTrackingCard :tracking="activeTracking" />
+        <div class="mt-3 col-md-10">
+            <h4>Đơn Mượn Sách cần duyệt</h4>
+            <BookPendingBorrowingTrackingList
+                v-if="pendingTrackingsCount > 0"
+                :trackings="pendingTrackings"
+                v-model:activeIndex="activeIndex"
+                @refresh-list="refreshList"
+            />
+            <p v-else>Không có đơn mượn sách.</p>
         </div>
     </div>
 </template>
 
 <script>
-import BookBorrowingTrackingCard from "@/components/BookBorrowingTrackingCard.vue";
+import BookPendingBorrowingTrackingList from "@/components/BookPendingBorrowingTrackingList.vue";
 import BookBorrowingTrackingList from "@/components/BookBorrowingTrackingList.vue";
-import InputSearch from "@/components/InputSearch.vue";
 import BookBorrowingTrackingService from "@/services/bookborrowingtracking.service";
 
 export default {
     components: {
-        BookBorrowingTrackingCard,
+        BookPendingBorrowingTrackingList,
         BookBorrowingTrackingList,
-        InputSearch,
     },
     data() {
         return {
@@ -47,28 +51,39 @@ export default {
         };
     },
     computed: {
+        
+    
         filteredTrackings() {
-            if (!this.searchText) return this.trackings;
-            return this.trackings.filter(tracking =>
-                [tracking.book_id, tracking.employee_id, tracking.reader_id].some(field =>
-                    field.includes(this.searchText)
-                )
-            );
+            return this.trackings.filter(tracking => tracking.employee_id != "");
         },
+       
+        pendingTrackings() {
+            return this.trackings.filter(tracking => tracking.employee_id == "");
+        },
+
         activeTracking() {
             return this.filteredTrackings[this.activeIndex] || null;
         },
+
         filteredTrackingsCount() {
             return this.filteredTrackings.length;
+        },
+    
+        pendingTrackingsCount() {
+            return this.pendingTrackings.length;
         },
     },
     methods: {
         async retrieveTrackings() {
             try {
                 this.trackings = await BookBorrowingTrackingService.getAll();
+                console.log(this.trackings);
             } catch (error) {
                 console.error(error);
             }
+        },
+        goToAddBookBorrowingTracking() {
+            this.$router.push({ name: "bookborrowingtracking.add" });
         },
         refreshList() {
             this.retrieveTrackings();

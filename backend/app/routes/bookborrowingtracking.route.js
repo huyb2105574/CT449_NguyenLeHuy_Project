@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.route("/")
     .get(auth,bookborrowingtrackingController.findAll)
-    .post(auth,bookborrowingtrackingController.create)
+    .post(bookborrowingtrackingController.create)
     .delete(auth,bookborrowingtrackingController.deleteAll);
 
 router.route("/:id")

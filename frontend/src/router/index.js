@@ -97,6 +97,18 @@ const routes = [
         component: BookBorrowingTrackingView
     },
     {
+        path: "/book-borrow-tracking/edit/:id",
+        name: "bookborrowingtracking.edit",
+        component: () => import("@/views/BookBorrowingTrackingEdit.vue"),
+        props: true,
+    },
+    {
+        path: "/book-borrow-tracking/add",
+        name: "bookborrowingtracking.add",
+        component: () => import("@/views/BookBorrowingTrackingAdd.vue"),
+        props: true,
+    },
+    {
         path: '/',
         name: 'bookBorrowingTracking',
         component: BookBorrowingTrackingView

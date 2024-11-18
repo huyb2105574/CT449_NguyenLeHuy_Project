@@ -1,14 +1,14 @@
 <script>
 import readerService from '@/services/reader.service';
-import employeeService from '@/services/employee.service';
 import bookService from '@/services/book.service';
+import bookBorrowingTrackingService from '@/services/bookborrowingtracking.service';
 
 export default {
     props: {
         trackings: { type: Array, required: true },
         activeIndex: { type: Number, required: true },
     },
-    emits: ["update:activeIndex"],
+    emits: ["update:activeIndex", "refresh-list"],
     data() {
         return {
             readers: [],  
@@ -24,7 +24,6 @@ export default {
             try {
                 for (const tracking of this.trackings) {
                     await this.fetchReader(tracking.reader_id);
-                    await this.fetchEmployee(tracking.employee_id);
                     await this.fetchBook(tracking.book_id);
                 }
             } catch (error) {
@@ -40,15 +39,6 @@ export default {
                 console.error('Lỗi khi lấy người mượn:', error);
             }
         },
-        
-        async fetchEmployee(employeeId) {
-            try {
-                const response = await employeeService.get(employeeId);  
-                this.employees.push(response);  
-            } catch (error) {
-                console.error('Lỗi khi lấy nhân viên:', error);
-            }
-        },
 
         async fetchBook(bookId) {
             try {
@@ -58,6 +48,33 @@ export default {
                 console.error('Lỗi khi lấy sách:', error);
             }
         },
+
+        async approveTracking(trackingId) {
+            try {
+                const employeeId = localStorage.getItem('_id'); 
+                if (!employeeId) {
+                    console.error('Không tìm thấy thông tin người dùng trong Storage.');
+                    return;
+                }
+
+                const updatedTracking = {
+                    employee_id: employeeId, 
+                };
+
+
+                const response = await bookBorrowingTrackingService.update(trackingId, updatedTracking);
+                if (response) {
+                    this.$emit('refresh-list');  
+                    console.log('Duyệt thành công.');
+                }
+            } catch (error) {
+                console.error('Lỗi khi duyệt:', error);
+            }
+        },
+        async refreshList() {
+            await this.fetchAllData();
+            this.activeIndex = -1;
+        }
     },
 };
 </script>
@@ -70,7 +87,6 @@ export default {
                     <th>STT</th>
                     <th>Tên Sách</th>
                     <th>Người Mượn</th>
-                    <th>Tên Nhân viên</th>
                     <th>Ngày Mượn</th>
                     <th>Ngày Trả</th>
                     <th></th>
@@ -86,18 +102,15 @@ export default {
                     <td>{{ index + 1 }}</td>
                     <td v-if="books[index]">{{ books[index].title }}</td>
                     <td v-if="readers[index]">{{ readers[index].name }}</td>
-                    <td v-if="employees[index]">{{ employees[index].name }}</td>
                     <td>{{ tracking.borrow_date }}</td>
                     <td>{{ tracking.return_date }}</td>
                     <td>
-                        <router-link
-                            :to="{ 
-                                name: 'bookborrowingtracking.edit', 
-                                params: { id: tracking._id } }"
-                            class="btn btn-sm btn-warning me-2"
+                        <button
+                            class="btn btn-sm btn-success"
+                            @click="approveTracking(tracking._id)"
                         >
-                            Hiệu chỉnh
-                        </router-link>
+                            Duyệt
+                        </button>
                     </td>
                 </tr>
             </tbody>
