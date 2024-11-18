@@ -4,7 +4,7 @@
         <div class="mr-auto navbar-nav">
             <li class="nav-item">
                 <router-link :to="{ name: 'publishers' }" class="nav-link">
-                    Nhà xuất bản
+                    Quản lý Nhà xuất bản
                 </router-link>
             </li>
             <li class="nav-item">

@@ -17,6 +17,18 @@ const routes = [
         component: PublisherView
     },
     {
+        path: "/publishers/edit/:id",
+        name: "publisher.edit",
+        component: () => import("@/views/PublisherEdit.vue"),
+        props: true,
+    },
+    {
+        path: "/publishers/add",
+        name: "publisher.add",
+        component: () => import("@/views/PublisherAdd.vue"),
+        props: true,
+    },
+    {
         path: '/readers',
         name: 'readers',
         component: ReaderView

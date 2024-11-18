@@ -29,37 +29,17 @@
                 </button>
             </div>
         </div>
-        <div class="mt-3 col-md-6">
-            <div v-if="activePublisher">
-                <h4>
-                    Chi tiết Nhà xuất bản
-                    <i class="fas fa-building"></i>
-                </h4>
-                <PublisherCard :publisher="activePublisher" />
-                <router-link
-                    :to="{
-                        name: 'publisher.edit',
-                        params: { id: activePublisher._id },
-                    }"
-                >
-                    <span class="mt-2 badge bg-warning">
-                        <i class="fas fa-edit"></i> Hiệu chỉnh
-                    </span>
-                </router-link>
-            </div>
-        </div>
     </div>
 </template>
 
 <script>
-import PublisherCard from "@/components/PublisherCard.vue";
+
 import InputSearch from "@/components/InputSearch.vue";
 import PublisherList from "@/components/PublisherList.vue";
 import PublisherService from "@/services/publisher.service";
 
 export default {
     components: {
-        PublisherCard,
         InputSearch,
         PublisherList,
     },
