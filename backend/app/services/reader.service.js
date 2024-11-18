@@ -8,6 +8,8 @@ class ReaderService {
     extractReaderData(payload) {
         const reader = {
             name: payload.name,
+            username: payload.username,
+            password: payload.password,
             birth: payload.birth,
             sex: payload.sex,
             address: payload.address,
@@ -36,6 +38,10 @@ class ReaderService {
         });
     }
 
+    async findByUsername(username) {
+        return await this.Reader.findOne({ username });
+    }
+
     async findById(id) {
         return await this.Reader.findOne({
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
@@ -52,7 +58,7 @@ class ReaderService {
             { $set: update },
             { returnDocument: "after" }
         );
-        return result.value;
+        return result;
     }
 
     async delete(id) {

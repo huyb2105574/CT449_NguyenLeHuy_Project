@@ -43,10 +43,10 @@
 
 <script>
 export default {
-  data() {
-    return {
-      name: localStorage.getItem('name') || '' 
-    };
+  computed: {
+    name() {
+      return localStorage.getItem('name') || ''; 
+    }
   },
   methods: {
     logout() {

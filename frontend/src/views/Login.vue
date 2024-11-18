@@ -18,6 +18,7 @@
 
 <script>
 import EmployeeService from "@/services/employee.service";
+import readerService from "@/services/reader.service";
 
 export default {
   data() {
@@ -27,24 +28,36 @@ export default {
       errorMessage: ''
     };
   },
+  
+
   methods: {
     async handleLogin() {
         try {
-            const response = await EmployeeService.login(this.username, this.password);
-            if (response && response.data.token) {
-            localStorage.setItem('authToken', response.data.token); 
-            localStorage.setItem('name', response.data.employee.name);  
-            this.$router.push('/');  
-            } else {
-            this.errorMessage = 'Đăng nhập thất bại';
-            }
-        } catch (error) {
-            this.errorMessage = 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.';
+        const employeeResponse = await EmployeeService.login(this.username, this.password);
+        if (employeeResponse && employeeResponse.data.token) {
+            localStorage.setItem('authToken', employeeResponse.data.token);
+            localStorage.setItem('name', employeeResponse.data.employee.name);
+            this.$router.push('/'); 
+            return; 
         }
+
+        const readerResponse = await ReaderService.login(this.username, this.password);
+        if (readerResponse && readerResponse.data.token) {
+            localStorage.setItem('authToken', readerResponse.data.token);
+            localStorage.setItem('name', readerResponse.data.reader.name);
+            this.$router.push('/'); 
+            return; 
+        }
+
+
+        this.errorMessage = 'Đăng nhập thất bại. Vui lòng kiểm tra thông tin đăng nhập.';
+        } catch (error) {
+        this.errorMessage = 'Đăng nhập thất bại. Đã xảy ra lỗi trong hệ thống.';
+        console.error(error);
+        }
+    },
     }
 
-
-  }
 };
 </script>
 

@@ -63,6 +63,9 @@ exports.update = async (req, res, next) => {
 
     try {
         const employeeService = new EmployeeService(MongoDB.client);
+        if (req.body.password) {
+            req.body.password = await bcrypt.hash(req.body.password, 10);
+        }
         const document = await employeeService.update(req.params.id, req.body);
         if (!document) {
             return next(new ApiError(404, "Không tìm thấy nhân viên"));

@@ -40,6 +40,24 @@ const routes = [
         component: ReaderView
     },
     {
+        path: "/readers/edit/:id",
+        name: "reader.edit",
+        component: () => import("@/views/ReaderEdit.vue"),
+        props: true,
+    },
+    {
+        path: "/readers/add",
+        name: "reader.add",
+        component: () => import("@/views/ReaderAdd.vue"),
+        props: true,
+    },
+    {
+        path: "/register",
+        name: "register",
+        component: () => import("@/views/Register.vue"),
+        props: true,
+    },
+    {
         path: '/employees',
         name: 'employees',
         component: EmployeeView

@@ -1,22 +1,61 @@
 const ReaderService = require("../services/reader.service");
 const MongoDB = require("../utils/mongodb.util");
 const ApiError = require("../api-error");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 exports.create = async (req, res, next) => {
-    if (!req.body?.name) {
-        return next(new ApiError(400, "Tên người đọc không được để trống"));
+    if (!req.body?.name || !req.body?.username || !req.body?.password) {
+        return next(new ApiError(400, "Tên, tên đăng nhập, và mật khẩu không được để trống"));
     }
+
     try {
         const readerService = new ReaderService(MongoDB.client);
+        req.body.password = await bcrypt.hash(req.body.password, 10);
+
         const document = await readerService.create(req.body);
         return res.send(document);
     } catch (error) {
-        console.error("Error creating reader:", error);  
-        return next(
-            new ApiError(500, "Đã xảy ra lỗi khi tạo người đọc")
-        );
+        console.error("Error creating reader:", error);
+        return next(new ApiError(500, "Đã xảy ra lỗi khi tạo người đọc"));
     }
 };
+
+exports.login = async (req, res, next) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+        return next(new ApiError(400, "Tên đăng nhập và mật khẩu không được để trống"));
+    }
+
+    try {
+        const readerService = new ReaderService(MongoDB.client);
+        const reader = await readerService.findByUsername(username);
+
+        if (!reader) {
+            return next(new ApiError(401, "Tài khoản không tồn tại"));
+        }
+
+   
+        const isPasswordValid = await bcrypt.compare(password, reader.password);
+        if (!isPasswordValid) {
+            return next(new ApiError(401, "Mật khẩu không đúng"));
+        }
+
+
+        const token = jwt.sign(
+            { id: reader._id, username: reader.username },
+            "secret_key", 
+            { expiresIn: "1h" }
+        );
+
+        res.send({ token, reader: { id: reader._id, name: reader.name } });
+    } catch (error) {
+        console.error("Error logging in:", error);
+        return next(new ApiError(500, "Lỗi khi đăng nhập"));
+    }
+};
+
 
 exports.findAll = async (req, res, next) => {
     let documents = [];
@@ -59,17 +98,24 @@ exports.update = async (req, res, next) => {
 
     try {
         const readerService = new ReaderService(MongoDB.client);
+        if (req.body.password) {
+            req.body.password = await bcrypt.hash(req.body.password, 10);
+        }
+
         const document = await readerService.update(req.params.id, req.body);
         if (!document) {
             return next(new ApiError(404, "Không tìm thấy người đọc"));
         }
+
         return res.send({ message: "Cập nhật người đọc thành công" });
     } catch (error) {
+        console.error("Error updating reader:", error);
         return next(
             new ApiError(500, `Lỗi khi cập nhật người đọc với id=${req.params.id}`)
         );
     }
 };
+
 
 exports.delete = async (req, res, next) => {
     try {
