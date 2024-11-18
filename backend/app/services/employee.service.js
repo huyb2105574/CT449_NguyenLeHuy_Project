@@ -43,6 +43,11 @@ class EmployeeService {
         });
     }
 
+    async findByUsername(username) {
+        return await this.Employee.findOne({ username });
+    }
+
+
     async update(id, payload) {
         const filter = {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,

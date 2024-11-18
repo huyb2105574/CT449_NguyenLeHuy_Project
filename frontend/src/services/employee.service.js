@@ -22,6 +22,14 @@ class EmployeeService {
     async delete(id) {
         return (await this.api.delete(`/${id}`)).data;
     }
+    async login(username, password) {
+        try {
+            const response = await this.api.post("/login", { username, password });
+            return response;  
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 export default new EmployeeService();

@@ -1,16 +1,16 @@
 const express = require("express");
 const readerController = require("../controllers/reader.controller");
-
+const auth = require("../middlewares/auth.middleware");
 const router = express.Router();
 
 router.route("/")
-    .get(readerController.findAll)
+    .get(auth,readerController.findAll)
     .post(readerController.create)
-    .delete(readerController.deleteAll);
+    .delete(auth,readerController.deleteAll);
 
 router.route("/:id")
-    .get(readerController.findOne)
-    .put(readerController.update)
-    .delete(readerController.delete);
+    .get(auth,readerController.findOne)
+    .put(auth,readerController.update)
+    .delete(auth,readerController.delete);
 
 module.exports = router;

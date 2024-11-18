@@ -1,19 +1,24 @@
 const EmployeeService = require("../services/employee.service");
 const MongoDB = require("../utils/mongodb.util");
 const ApiError = require("../api-error");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+
 
 exports.create = async (req, res, next) => {
-    if (!req.body?.name) {
-        return next(new ApiError(400, "Tên nhân viên không được để trống"));
+    if (!req.body?.name || !req.body?.username || !req.body?.password) {
+        return next(new ApiError(400, "Tên, tên đăng nhập, và mật khẩu không được để trống"));
     }
+
     try {
         const employeeService = new EmployeeService(MongoDB.client);
+        
+        req.body.password = await bcrypt.hash(req.body.password, 10);
+
         const document = await employeeService.create(req.body);
         return res.send(document);
     } catch (error) {
-        return next(
-            new ApiError(500, "Đã xảy ra lỗi khi tạo nhân viên")
-        );
+        return next(new ApiError(500, "Đã xảy ra lỗi khi tạo nhân viên"));
     }
 };
 
@@ -96,3 +101,36 @@ exports.deleteAll = async (req, res, next) => {
         );
     }
 };
+
+exports.login = async (req, res, next) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+        return next(new ApiError(400, "Tên đăng nhập và mật khẩu không được để trống"));
+    }
+
+    try {
+        const employeeService = new EmployeeService(MongoDB.client);
+        const employee = await employeeService.findByUsername(username);
+
+        if (!employee) {
+            return next(new ApiError(401, "Tài khoản không tồn tại"));
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, employee.password);
+        if (!isPasswordValid) {
+            return next(new ApiError(401, "Mật khẩu không đúng"));
+        }
+
+        const token = jwt.sign(
+            { id: employee._id, username: employee.username },
+            "secret_key", 
+            { expiresIn: "1h" }
+        );
+
+        res.send({ token, employee: { id: employee._id, name: employee.name, position: employee.position } });
+    } catch (error) {
+        return next(new ApiError(500, "Lỗi khi đăng nhập"));
+    }
+};
+

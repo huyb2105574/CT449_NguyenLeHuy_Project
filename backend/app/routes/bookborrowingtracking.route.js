@@ -1,16 +1,17 @@
 const express = require("express");
 const bookborrowingtrackingController = require("../controllers/bookborrowingtracking.controller");
-
+const auth = require("../middlewares/auth.middleware");
 const router = express.Router();
 
+
 router.route("/")
-    .get(bookborrowingtrackingController.findAll)
-    .post(bookborrowingtrackingController.create)
-    .delete(bookborrowingtrackingController.deleteAll);
+    .get(auth,bookborrowingtrackingController.findAll)
+    .post(auth,bookborrowingtrackingController.create)
+    .delete(auth,bookborrowingtrackingController.deleteAll);
 
 router.route("/:id")
-    .get(bookborrowingtrackingController.findOne)
-    .put(bookborrowingtrackingController.update)
-    .delete(bookborrowingtrackingController.delete);
+    .get(auth,bookborrowingtrackingController.findOne)
+    .put(auth,bookborrowingtrackingController.update)
+    .delete(auth,bookborrowingtrackingController.delete);
 
 module.exports = router;

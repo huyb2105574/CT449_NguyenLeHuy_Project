@@ -4,12 +4,18 @@ import ReaderView from '../views/ReaderView.vue';
 import EmployeeView from '../views/EmployeeView.vue';
 import BookView from '../views/BookView.vue';
 import BookBorrowingTrackingView from '@/views/BookBorrowingTrackingView.vue';
+import { isAuthenticated } from '@/utils/auth';
 
 const routes = [
     {
         path: "/:pathMatch(.*)*",
         name: "notfound",
         component: () => import("@/views/NotFound.vue"),
+    },
+    {
+        path: '/login',
+        name: 'login',
+        component: () => import('@/views/Login.vue'), 
     },
     {
         path: '/publishers',
@@ -37,6 +43,18 @@ const routes = [
         path: '/employees',
         name: 'employees',
         component: EmployeeView
+    },
+    {
+        path: "/employees/edit/:id",
+        name: "employee.edit",
+        component: () => import("@/views/EmployeeEdit.vue"),
+        props: true,
+    },
+    {
+        path: "/employees/add",
+        name: "employee.add",
+        component: () => import("@/views/EmployeeAdd.vue"),
+        props: true,
     },
     {
         path: '/books',
@@ -70,6 +88,14 @@ const routes = [
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes,
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.requiresAuth && !isAuthenticated()) {
+    next('/login');  
+  } else {
+    next();  
+  }
 });
 
 export default router;
