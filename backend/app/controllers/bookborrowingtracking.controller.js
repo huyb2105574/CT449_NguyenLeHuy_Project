@@ -4,7 +4,7 @@ const ApiError = require("../api-error");
 
 exports.create = async (req, res, next) => {
     if (!req.body?.reader_id || !req.body?.book_id) {
-        return next(new ApiError(400, "Reader, book, or staff information is missing"));
+        return next(new ApiError(400, "Reader, book information is missing"));
     }
     try {
         const service = new BookBorrowingTrackingService(MongoDB.client);

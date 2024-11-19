@@ -4,6 +4,8 @@ import ReaderView from '../views/ReaderView.vue';
 import EmployeeView from '../views/EmployeeView.vue';
 import BookView from '../views/BookView.vue';
 import BookBorrowingTrackingView from '@/views/BookBorrowingTrackingView.vue';
+import BookForReader from '@/views/BookForReader.vue';
+import HistoryBorrowing from '@/views/HistoryBorrowing.vue';
 import { isAuthenticated } from '@/utils/auth';
 
 const routes = [
@@ -16,6 +18,11 @@ const routes = [
         path: '/login',
         name: 'login',
         component: () => import('@/views/Login.vue'), 
+    },
+    {
+        path: '/login/reader',
+        name: 'loginreader',
+        component: () => import('@/views/LoginForReader.vue'), 
     },
     {
         path: '/publishers',
@@ -110,8 +117,18 @@ const routes = [
     },
     {
         path: '/',
-        name: 'bookBorrowingTracking',
-        component: BookBorrowingTrackingView
+        name: 'bookforreader',
+        component: BookForReader
+    },
+    {
+        path: '/bookforreader',
+        name: 'bookforreader',
+        component: BookForReader
+    },
+    {
+        path: '/historyborrowing',
+        name: 'historyBorrowing',
+        component: HistoryBorrowing
     },
 ];
 

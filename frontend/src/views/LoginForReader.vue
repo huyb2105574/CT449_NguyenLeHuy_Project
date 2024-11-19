@@ -1,10 +1,11 @@
 <template>
+
   <div class="login container">
     <nav class="nav justify-content-center mb-4">
       <router-link to="/login/reader" class="nav-link active">Đăng nhập Độc giả</router-link>
       <router-link to="/login" class="nav-link">Đăng nhập Nhân viên</router-link>
     </nav>
-    <h2 class="text-center mb-4">Đăng nhập Nhân viên</h2>
+    <h2 class="text-center mb-4">Đăng nhập Độc giả</h2>
     <form @submit.prevent="handleLogin" class="form-signin">
       <div class="mb-3">
         <label for="username" class="form-label">Tên đăng nhập:</label>
@@ -21,7 +22,7 @@
 </template>
 
 <script>
-import EmployeeService from "@/services/employee.service";
+import ReaderService from "@/services/reader.service";
 
 export default {
   data() {
@@ -35,13 +36,13 @@ export default {
   methods: {
     async handleLogin() {
       try {
-        const response = await EmployeeService.login(this.username, this.password);
+        const response = await ReaderService.login(this.username, this.password);
         if (response && response.data.token) {
           localStorage.setItem('authToken', response.data.token);
-          localStorage.setItem('name', response.data.employee.name);
-          localStorage.setItem('_id', response.data.employee.id);
-          localStorage.setItem('role', 'employee');
-          this.$router.push('book-borrow-tracking'); 
+          localStorage.setItem('name', response.data.reader.name);
+          localStorage.setItem('_id', response.data.reader.id);
+          localStorage.setItem('role', 'reader');
+          this.$router.push('/bookforreader'); 
         } else {
           this.errorMessage = 'Đăng nhập thất bại. Vui lòng kiểm tra thông tin đăng nhập.';
         }
