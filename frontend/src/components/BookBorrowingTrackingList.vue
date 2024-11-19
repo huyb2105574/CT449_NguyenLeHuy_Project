@@ -8,7 +8,7 @@ export default {
         trackings: { type: Array, required: true },
         activeIndex: { type: Number, required: true },
     },
-    emits: ["update:activeIndex"],
+    emits: ["update:activeIndex", "refresh-list"],
     data() {
         return {
             readers: [],  
@@ -58,6 +58,10 @@ export default {
                 console.error('Lỗi khi lấy sách:', error);
             }
         },
+        async refreshList() {
+            await this.fetchAllData();
+            this.activeIndex = -1;
+        }
     },
 };
 </script>

@@ -1,9 +1,8 @@
 <template>
-
   <div class="login container">
     <nav class="nav justify-content-center mb-4">
-      <router-link to="/login/reader" class="nav-link active">Đăng nhập Độc giả</router-link>
-      <router-link to="/login" class="nav-link">Đăng nhập Nhân viên</router-link>
+      <router-link to="/login/reader" class="nav-link" :class="{ 'active': isReader }">Độc giả</router-link>
+      <router-link to="/login" class="nav-link" :class="{ 'active': !isReader }">Nhân viên</router-link>
     </nav>
     <h2 class="text-center mb-4">Đăng nhập Độc giả</h2>
     <form @submit.prevent="handleLogin" class="form-signin">
@@ -18,6 +17,9 @@
       <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
       <p v-if="errorMessage" class="error text-center mt-3">{{ errorMessage }}</p>
     </form>
+    <p class="text-center mt-3">
+      Bạn chưa có tài khoản? <router-link to="/register" class="text-primary">Đăng ký</router-link>
+    </p>
   </div>
 </template>
 
@@ -32,7 +34,11 @@ export default {
       errorMessage: ''
     };
   },
-  
+  computed: {
+    isReader() {
+      return this.$route.path.includes('reader');
+    }
+  },
   methods: {
     async handleLogin() {
       try {
@@ -56,7 +62,6 @@ export default {
 </script>
 
 <style scoped>
-/* Trang trí giao diện với Bootstrap */
 .login {
   max-width: 400px;
   margin: 50px auto;
@@ -64,6 +69,15 @@ export default {
   border: 1px solid #ccc;
   border-radius: 8px;
   background-color: #f9f9f9;
+}
+
+.nav-link.active {
+  color: #007bff;
+  font-weight: bold;
+}
+
+.nav-link {
+  color: black;
 }
 
 .error {

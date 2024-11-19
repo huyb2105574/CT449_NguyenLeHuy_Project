@@ -54,7 +54,7 @@ export default {
         async deleteBorrowing() {
             if (confirm("Bạn có chắc chắn muốn xóa bản ghi này?")) {
                 try {
-                    await BorrowingService.delete(this.borrowing._id);
+                    await BookBorrowingTrackingService.delete(this.borrowing._id);
                     alert("Thông tin mượn sách đã được xóa thành công.");
                     this.$router.push({ name: "bookBorrowingTracking" });
                 } catch (error) {

@@ -6,14 +6,13 @@ import BookView from '../views/BookView.vue';
 import BookBorrowingTrackingView from '@/views/BookBorrowingTrackingView.vue';
 import BookForReader from '@/views/BookForReader.vue';
 import HistoryBorrowing from '@/views/HistoryBorrowing.vue';
+import BookPendingBorrowingTrackingView from '@/views/BookPendingBorrowingTrackingView.vue';
+import AccountInfo from '@/views/AccountInfo.vue';
+
 import { isAuthenticated } from '@/utils/auth';
 
 const routes = [
-    {
-        path: "/:pathMatch(.*)*",
-        name: "notfound",
-        component: () => import("@/views/NotFound.vue"),
-    },
+    
     {
         path: '/login',
         name: 'login',
@@ -104,6 +103,11 @@ const routes = [
         component: BookBorrowingTrackingView
     },
     {
+        path: '/book-pending-borrow-tracking',
+        name: 'bookPendingBorrowingTracking',
+        component: BookPendingBorrowingTrackingView
+    },
+    {
         path: "/book-borrow-tracking/edit/:id",
         name: "bookborrowingtracking.edit",
         component: () => import("@/views/BookBorrowingTrackingEdit.vue"),
@@ -117,7 +121,7 @@ const routes = [
     },
     {
         path: '/',
-        name: 'bookforreader',
+        name: 'home',
         component: BookForReader
     },
     {
@@ -129,6 +133,22 @@ const routes = [
         path: '/historyborrowing',
         name: 'historyBorrowing',
         component: HistoryBorrowing
+    },
+    {
+        path: "/:pathMatch(.*)*",
+        name: "notfound",
+        component: () => import("@/views/NotFound.vue"),
+    },
+    {
+        path: '/info',
+        name: 'info',
+        component: AccountInfo
+    },
+    {
+        path: '/editinfo/:id',
+        name: 'editinfo',
+        component: () => import("@/views/EditAccountInfo.vue"),
+        props: true,
     },
 ];
 

@@ -1,4 +1,5 @@
 const { ObjectId } = require("mongodb");
+const bcrypt = require("bcrypt");
 
 class ReaderService {
     constructor(client) {
@@ -48,18 +49,35 @@ class ReaderService {
         });
     }
 
+ 
+
     async update(id, payload) {
         const filter = {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
         };
+        const existingReader = await this.Reader.findOne(filter);
+        if (!existingReader) {
+            throw new Error("Reader not found");
+        }
+
+        if (payload.password && payload.password !== existingReader.password) {
+    
+            payload.password = await bcrypt.hash(payload.password, 10);
+        } else {
+            payload.password = existingReader.password;
+        }
+
         const update = this.extractReaderData(payload);
+
         const result = await this.Reader.findOneAndUpdate(
             filter,
             { $set: update },
             { returnDocument: "after" }
         );
+
         return result;
     }
+
 
     async delete(id) {
         const result = await this.Reader.findOneAndDelete({

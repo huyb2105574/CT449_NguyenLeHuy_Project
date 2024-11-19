@@ -57,8 +57,6 @@ export default {
                     <strong>Năm xuất bản:</strong>
                     {{ book.publish_year }}
                 </div>
-
-                <!-- Hiển thị nhà xuất bản nếu có -->
                 <div class="p-1" v-if="publisher">
                     <strong>Nhà xuất bản:</strong>
                     {{ publisher.name }}

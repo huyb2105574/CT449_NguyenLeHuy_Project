@@ -1,4 +1,5 @@
 const { ObjectId } = require("mongodb");
+const bcrypt = require("bcrypt");
 
 class EmployeeService {
     constructor(client) {
@@ -48,18 +49,35 @@ class EmployeeService {
     }
 
 
+
     async update(id, payload) {
         const filter = {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
         };
+
+        const existingEmployee = await this.Employee.findOne(filter);
+        if (!existingEmployee) {
+            throw new Error("Employee not found");
+        }
+
+        if (payload.password && payload.password !== existingEmployee.password) {
+            payload.password = await bcrypt.hash(payload.password, 10);
+        } else {
+        
+            payload.password = existingEmployee.password;
+        }
+
         const update = this.extractEmployeeData(payload);
+
         const result = await this.Employee.findOneAndUpdate(
             filter,
             { $set: update },
             { returnDocument: "after" }
         );
+
         return result;
     }
+
 
     async delete(id) {
         const result = await this.Employee.findOneAndDelete({

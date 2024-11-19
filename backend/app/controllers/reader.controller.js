@@ -11,6 +11,10 @@ exports.create = async (req, res, next) => {
 
     try {
         const readerService = new ReaderService(MongoDB.client);
+        const existingReader = await readerService.findByUsername(req.body.username);
+        if (existingReader) {
+            return next(new ApiError(400, "Tên đăng nhập đã tồn tại"));
+        }
         req.body.password = await bcrypt.hash(req.body.password, 10);
 
         const document = await readerService.create(req.body);
@@ -98,10 +102,6 @@ exports.update = async (req, res, next) => {
 
     try {
         const readerService = new ReaderService(MongoDB.client);
-        if (req.body.password) {
-            req.body.password = await bcrypt.hash(req.body.password, 10);
-        }
-
         const document = await readerService.update(req.params.id, req.body);
         if (!document) {
             return next(new ApiError(404, "Không tìm thấy người đọc"));

@@ -67,7 +67,12 @@ export default {
       this.isFormVisible = false;
     },
     async submitBorrowingForm() {
-      try {  
+      try {
+        const [startYear, startMonth, startDay] = this.borrowing.borrow_date.split("-");
+        this.borrowing.borrow_date = `${startDay}/${startMonth}/${startYear}`;
+        const [returnYear, returnMonth, returnDay] = this.borrowing.return_date.split("-");
+        this.borrowing.return_date = `${returnDay}/${returnMonth}/${returnYear}`;
+
         await this.addBorrowing(this.borrowing);
         alert("Đơn mượn sách đã được tạo thành công!");
         this.hideBorrowForm(); 

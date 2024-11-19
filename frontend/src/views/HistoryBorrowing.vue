@@ -6,7 +6,7 @@
                     <i class="fas fa-redo"></i> Làm mới
                 </button>
             </div>
-            <h4>Lịch sữ mượn sách</h4>
+            <h4>Lịch sử mượn sách</h4>
             <HistoryBorrowingTrackingList
                 v-if="pendingTrackingsCount > 0"
                 :trackings="pendingTrackings"

@@ -1,7 +1,7 @@
 <template>
     <div class="page">
         <h4>Đăng ký</h4>
-        <ReaderForm :reader="reader" @submit:reader="addReader" />
+        <ReaderForm :reader="reader" :isRegisterPage="true" @submit:reader="addReader" />
         <p>{{ message }}</p>
     </div>
 </template>

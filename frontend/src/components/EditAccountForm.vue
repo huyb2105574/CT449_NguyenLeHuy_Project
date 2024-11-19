@@ -42,11 +42,8 @@
             <button class="btn btn-primary">
                 <i class="fas fa-save"></i> Lưu
             </button>
-            <button v-if="readerLocal._id" type="button" class="mr-2 btn btn-danger" @click="deleteReader">
-                <i class="fas fa-trash-alt"></i> Xóa
-            </button>
             <button type="button" class="mr-2 btn btn-danger" @click="cancel">
-                <i class="fas fa-times"></i> {{ isRegisterPage ? 'Quay về trang đăng nhập' : 'Thoát' }}
+                <i class="fas fa-times"></i> Quay về trang thông tin
             </button>
         </div>
     </Form>
@@ -62,10 +59,9 @@ export default {
         Field,
         ErrorMessage,
     },
-    emits: ["submit:reader", "delete:reader"],
+    emits: ["submit:reader"],
     props: {
         reader: { type: Object, required: true },
-        isRegisterPage: { type: Boolean, default: false }  
     },
     data() {
         const readerFormSchema = yup.object().shape({
@@ -89,17 +85,11 @@ export default {
         submitReader() {
             this.$emit("submit:reader", this.readerLocal);
         },
-        deleteReader() {
-            this.$emit("delete:reader", this.readerLocal.id);
-        },
-        cancel() {
-            if (this.isRegisterPage) {
-                this.$router.push({ name: "login" });
-            } else {
-                const reply = window.confirm("Bạn có chắc muốn rời khỏi mà không lưu thay đổi?");
-                if (reply) {
-                    this.$router.push({ name: "readers" });
-                }
+        
+        cancel() {  
+            const reply = window.confirm("Bạn có chắc muốn rời khỏi mà không lưu thay đổi?");
+            if (reply) {
+                this.$router.push({ name: "info" });
             }
         },
     },

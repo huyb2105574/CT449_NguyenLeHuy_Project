@@ -12,6 +12,10 @@ exports.create = async (req, res, next) => {
 
     try {
         const employeeService = new EmployeeService(MongoDB.client);
+        const existingEmployee = await employeeService.findByUsername(req.body.username);
+        if (existingEmployee) {
+            return next(new ApiError(400, "Tên đăng nhập đã tồn tại"));
+        }
         
         req.body.password = await bcrypt.hash(req.body.password, 10);
 
@@ -63,9 +67,6 @@ exports.update = async (req, res, next) => {
 
     try {
         const employeeService = new EmployeeService(MongoDB.client);
-        if (req.body.password) {
-            req.body.password = await bcrypt.hash(req.body.password, 10);
-        }
         const document = await employeeService.update(req.params.id, req.body);
         if (!document) {
             return next(new ApiError(404, "Không tìm thấy nhân viên"));

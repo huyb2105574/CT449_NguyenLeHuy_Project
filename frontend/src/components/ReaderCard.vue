@@ -12,6 +12,10 @@ export default {
             <strong>Họ và tên:</strong>
             {{ reader.name }}
         </div>
+         <div class="p-1">
+            <strong>Tên đăng nhập:</strong>
+            {{ reader.username }}
+        </div>
         <div class="p-1">
             <strong>Ngày sinh:</strong>
             {{ reader.birth }}
