@@ -9,6 +9,7 @@
 <script>
 import BorrowingForm from "@/components/BorrowingForm.vue";
 import BookBorrowingTrackingService from "@/services/bookborrowingtracking.service";
+import bookService from "@/services/book.service";
 
 export default {
     components: {
@@ -29,6 +30,15 @@ export default {
     methods: {
         async addBorrowing(data) {
             try {
+                if(data.employee_id!=""){
+                    const book = await bookService.get(data.book_id);
+                    if (book.quantity <= 0) {
+                        this.message = "Không đủ sách để mượn.";
+                        return;
+                        }
+                    const updatedBook = { ...book, quantity: book.quantity - 1 };
+                    await bookService.update(data.book_id, updatedBook);
+                }
                 await BookBorrowingTrackingService.create(data);
                 alert("Thông tin mượn sách đã được thêm thành công.");
                 this.$router.push({ name: "bookBorrowingTracking" });

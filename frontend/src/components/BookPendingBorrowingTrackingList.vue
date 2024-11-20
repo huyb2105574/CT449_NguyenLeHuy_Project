@@ -66,12 +66,24 @@ export default {
                     return;
                 }
 
-                const updatedTracking = { employee_id: employeeId };
+                const tracking = await bookBorrowingTrackingService.get(trackingId);
+                
 
+                const updatedTracking = { employee_id: employeeId };
+                const book = await bookService.get(tracking.book_id);
+                
+
+                if (book.quantity <= 0) {
+                    this.message = "Không đủ sách để mượn.";
+                    return;
+                }
+
+                const updatedBook = { ...book, quantity: book.quantity - 1 };
+                await bookService.update(tracking.book_id, updatedBook);
                 const response = await bookBorrowingTrackingService.update(trackingId, updatedTracking);
                 if (response) {
                     console.log("Duyệt thành công.");
-                    this.$emit("refresh-list"); // Emit sự kiện cho component cha
+                    this.$emit("refresh-list"); 
                 }
             } catch (error) {
                 console.error("Lỗi khi duyệt:", error);
