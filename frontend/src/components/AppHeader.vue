@@ -89,7 +89,7 @@ export default {
   },
   computed: {
     name() {
-      return localStorage.getItem('name') || 'Người dùng';
+      return localStorage.getItem('name') || '';
     },
     role() {
       return localStorage.getItem('role') || '';
@@ -104,6 +104,9 @@ export default {
       this.$router.push('/login');
     },
     checkAuthentication() {
+      if (this.name == "") {
+        this.logout();
+      }
       if (this.role == "") {
         this.logout();
       }

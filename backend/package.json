@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon server.js"
   },
   "author": "Huy Nguyen",
   "license": "ISC",
@@ -15,9 +16,6 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.9.0",
     "multer": "^1.4.5-lts.1"
-  },
-  "script": {
-    "start": "nodemon server.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.10.0",
